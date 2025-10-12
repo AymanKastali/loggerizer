@@ -4,7 +4,7 @@ from typing import Literal
 
 class DefaultFormatter(Formatter):
     DEFAULT_FORMAT = (
-        "%(asctime)s | %(name)-15s | %(levelname)-8s | "
+        "%(asctime)s | %(name)s | %(levelname)s | "
         "%(filename)s:%(lineno)d | %(funcName)s() | %(message)s"
     )
     DEFAULT_DATEFMT = "%Y-%m-%d %H:%M:%S"
