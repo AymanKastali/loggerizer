@@ -15,4 +15,4 @@ class LogLevelEnum(IntEnum):
     @classmethod
     def values(cls) -> list[int]:
         """Return all allowed file levels."""
-        return [level.value for level in cls]
+        return [member.value for member in cls]

@@ -1,35 +1,25 @@
-from logging import Formatter, LogRecord
-from typing import Literal
+from logging import LogRecord
+
+from formatters.base_formatter import BaseFormatter
 
 
-class DefaultFormatter(Formatter):
-    DEFAULT_FORMAT = (
-        "%(asctime)s | %(name)s | %(levelname)s | "
-        "%(filename)s:%(lineno)d | %(funcName)s() | %(message)s"
-    )
-    DEFAULT_DATEFMT = "%Y-%m-%d %H:%M:%S"
+class DefaultFormatter(BaseFormatter):
+    """
+    Human-readable formatter.
+    Formats log records into a pipe-separated string.
+    """
 
-    FormatStyle = Literal["%", "{", "$"]
-
-    def __init__(
-        self,
-        fmt: str | None = None,
-        datefmt: str | None = None,
-        style: FormatStyle = "%",
-    ) -> None:
-        super().__init__(
-            fmt=fmt or self.DEFAULT_FORMAT, datefmt=datefmt or self.DEFAULT_DATEFMT, style=style
-        )
+    def __init__(self, *args, flat: bool = False, **kwargs):
+        """
+        :param flat: If True, only log values separated by | without field names.
+        """
+        super().__init__(*args, **kwargs)
+        self.flat = flat
 
     def format(self, record: LogRecord) -> str:
-        # Start with the main log line
-        message = super().format(record)
-
-        # Only add exception info if present
-        if record.exc_info:
-            exc_text = self.formatException(record.exc_info)
-            exc_lines = exc_text.splitlines()
-            exc_indented = "\n".join(f"    {line}" for line in exc_lines)
-            message = f"{message}\n{exc_indented}"
-
-        return message
+        data = self.record_to_dict(record)
+        if self.flat:
+            # Only log values in order
+            return " | ".join(str(v) for v in data.values())
+        # Include field names
+        return " | ".join(f"{k}={v}" for k, v in data.items())

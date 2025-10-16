@@ -2,7 +2,7 @@ from logging import Logger
 from typing import TextIO
 
 from config import SMTPConfig
-from enums import FileModeEnum, LogLevelEnum, TimeRotationIntervalEnum
+from enums import FileModeEnum, LogField, LogLevelEnum, TimeRotationIntervalEnum
 from formatters import DefaultFormatter, JsonFormatter
 from handlers import (
     file_handler,
@@ -16,7 +16,7 @@ from loggers import LoggerBuilder
 
 
 class LoggerFactory:
-    """Simple factory for creating pre-configured loggers."""
+    """Factory for creating loggers with selectable fields and optional flat output."""
 
     @staticmethod
     def null_logger(name: str = "null_logger") -> Logger:
@@ -30,12 +30,14 @@ class LoggerFactory:
         encoding: str | None = "utf-8",
         delay: bool = False,
         errors: str | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,  # added flat parameter for default formatter
     ) -> Logger:
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(JsonFormatter())
+            .set_formatter(JsonFormatter(extra_fields=extra_fields))
             .add_handler(
                 file_handler(
                     f"{filename}.json",
@@ -56,13 +58,14 @@ class LoggerFactory:
         encoding: str | None = "utf-8",
         delay: bool = False,
         errors: str | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,
     ) -> Logger:
-        """Create a standard file-based logger with full control over file handler parameters."""
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(DefaultFormatter())
+            .set_formatter(DefaultFormatter(extra_fields=extra_fields, flat=flat))
             .add_handler(
                 file_handler(
                     filename=f"{filename}.log",
@@ -76,25 +79,33 @@ class LoggerFactory:
         )
 
     @staticmethod
-    def console_logger(name: str = "console_logger", stream: TextIO | None = None) -> Logger:
+    def console_logger(
+        name: str = "console_logger",
+        stream: TextIO | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,
+    ) -> Logger:
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(DefaultFormatter())
+            .set_formatter(DefaultFormatter(extra_fields=extra_fields, flat=flat))
             .add_handler(stream_handler(stream=stream))
             .build()
         )
 
     @staticmethod
     def json_console_logger(
-        name: str = "console_json_logger", stream: TextIO | None = None
+        name: str = "console_json_logger",
+        stream: TextIO | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,  # flat is ignored for JSON, kept for API consistency
     ) -> Logger:
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(JsonFormatter())
+            .set_formatter(JsonFormatter(extra_fields=extra_fields))
             .add_handler(stream_handler(stream=stream))
             .build()
         )
@@ -110,12 +121,14 @@ class LoggerFactory:
         delay: bool = False,
         utc: bool = False,
         errors: str | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,
     ) -> Logger:
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(DefaultFormatter())
+            .set_formatter(DefaultFormatter(extra_fields=extra_fields, flat=flat))
             .add_handler(
                 timed_rotating_file_handler(
                     filename=f"{filename}.log",
@@ -138,12 +151,14 @@ class LoggerFactory:
         max_bytes: int = 10_000_000,
         backup_count: int = 5,
         encoding: str | None = "utf-8",
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,
     ) -> Logger:
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.DEBUG)
-            .set_formatter(DefaultFormatter())
+            .set_formatter(DefaultFormatter(extra_fields=extra_fields, flat=flat))
             .add_handler(
                 rotating_file_handler(
                     filename=f"{filename}.log",
@@ -156,14 +171,19 @@ class LoggerFactory:
         )
 
     @staticmethod
-    def email_logger(name: str = "smtp_logger", smtp_config: SMTPConfig | None = None) -> Logger:
+    def email_logger(
+        name: str = "smtp_logger",
+        smtp_config: SMTPConfig | None = None,
+        extra_fields: list[LogField] | None = None,
+        flat: bool = False,
+    ) -> Logger:
         if smtp_config is None:
             raise ValueError("SMTP configuration is required for email logger")
         return (
             LoggerBuilder()
             .set_name(name)
             .set_level(LogLevelEnum.ERROR)
-            .set_formatter(DefaultFormatter())
+            .set_formatter(DefaultFormatter(extra_fields=extra_fields, flat=flat))
             .add_handler(smtp_handler(smtp_config))
             .build()
         )

@@ -18,4 +18,4 @@ class TimeRotationIntervalEnum(StrEnum):
     @classmethod
     def values(cls) -> list[str]:
         """Return all allowed file intervals."""
-        return [interval.value for interval in cls]
+        return [member.value for member in cls]
