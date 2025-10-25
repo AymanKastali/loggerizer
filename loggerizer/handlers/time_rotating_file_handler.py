@@ -1,7 +1,7 @@
 from logging import Handler
 from logging.handlers import TimedRotatingFileHandler
 
-from enums import TimeRotationIntervalEnum
+from loggerizer.enums import TimeRotationIntervalEnum
 
 
 def timed_rotating_file_handler(

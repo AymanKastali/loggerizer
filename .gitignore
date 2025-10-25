@@ -1,7 +1,47 @@
-# Python compiled files
-*.pyc
-*.pyo
-*.pyd
-
-# Python cache directories
+# Python cache / bytecode
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Environment / secrets
+**/.env
+.venv/
+env/
+venv/
+*.venv
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+*.pypirc
+
+# Logs / test outputs
+*.log
+.coverage
+*.cover
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+pytestdebug.log
+
+# IDEs / editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.pytest_cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# C extensions
+*.so
+
+# PyInstaller
+*.manifest
+*.spec

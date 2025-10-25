@@ -1,7 +1,7 @@
 from logging import FileHandler, Handler
 from pathlib import Path
 
-from enums import FileExtensionEnum, FileModeEnum
+from loggerizer.enums import FileExtensionEnum, FileModeEnum
 
 
 def file_handler(

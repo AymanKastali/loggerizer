@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from logging import Filter, Formatter, Handler, Logger, getLogger
 from typing import Self
 
-from enums import LogLevelEnum
-from formatters import DefaultFormatter
+from loggerizer.enums import LogLevelEnum
+from loggerizer.formatters import DefaultFormatter
 
 
 @dataclass

@@ -1,67 +1,94 @@
-# Logarizer Logger Examples
+# Loggerizer Logger Examples
 
-This document demonstrates how to use individual loggers from **Logarizer** separately without wrapping them in a main function.
+This document demonstrates how to use individual loggers from **Loggerizer** separately without wrapping them in a main function.
 
 ---
 
 ## Console Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-console = LoggerFactory.console_logger(name="console_main")
+console_logger = LoggerFactory.console_logger(name="console_main", flat=True)
 console.info("Console logger ready!")
 ```
 
 ## Console JSON Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-console_json = LoggerFactory.json_console_logger(name="console_json_main")
+console_json_logger = LoggerFactory.json_console_logger(
+    name="console_json_main",
+    extra_fields=[LogField.MODULE, LogField.THREAD_NAME, LogField.PROCESS],
+)
 console_json.info("Console JSON logger ready!")
 ```
 
 ## File Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-file_log = LoggerFactory.file_logger(name="file_main", filename="app")
+file_log = LoggerFactory.file_logger(
+    name="file_main",
+    filename="app",
+    extra_fields=[LogField.MODULE, LogField.LINE_NO, LogField.FUNC_NAME],
+    flat=True,
+)
 file_log.warning("File logger writing to app.log")
 ```
 
 ## JSON File Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-json_log = LoggerFactory.json_file_logger(name="json_file_main", filename="events")
+json_log = LoggerFactory.json_file_logger(
+    name="json_file_main",
+    filename="events",
+    extra_fields=[LogField.MODULE, LogField.THREAD_NAME, LogField.PROCESS],
+)
 json_log.debug("JSON log entry")
 ```
 
 ## Timed Rotating Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-timed = LoggerFactory.timed_rotating_logger(name="timed_logger", filename="timed_logs")
+timed = LoggerFactory.timed_rotating_logger(
+    name="timed_logger",
+    filename="timed_logs",
+    extra_fields=[LogField.MODULE, LogField.PROCESS_NAME],
+)
 timed.info("Timed rotating log active")
 ```
 
 ## Size Rotating Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
-rotating = LoggerFactory.size_rotating_logger(name="rotating_logger", filename="rotating_logs")
+rotating = LoggerFactory.size_rotating_logger(
+    name="rotating_logger",
+    filename="rotating_logs",
+    extra_fields=[LogField.MODULE, LogField.LINE_NO],
+)
 rotating.info("Size rotating log active")
 ```
 
 ## Null Logger
 
 ```python
-from loggers import LoggerFactory
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
 null_log = LoggerFactory.null_logger(name="null_main")
 null_log.info("This message is discarded")
@@ -70,8 +97,9 @@ null_log.info("This message is discarded")
 ## SMTP Logger
 
 ```python
-from config.smtp_config import SMTPConfig
-from loggers import LoggerFactory
+from loggerizer.config.smtp_config import SMTPConfig
+from loggerizer.loggers import LoggerFactory
+from loggerizer.enums import LogField
 
 smtp_conf = SMTPConfig(
     host=("localhost", 1025),
@@ -80,7 +108,11 @@ smtp_conf = SMTPConfig(
     subject="Critical Alert",
 )
 
-smtp_log = LoggerFactory.email_logger(name="smtp_main", smtp_config=smtp_conf)
+smtp_log = LoggerFactory.email_logger(
+    name="smtp_main",
+    smtp_config=smtp_conf,
+    extra_fields=[LogField.MODULE, LogField.LINE_NO, LogField.FUNC_NAME],
+)
 smtp_log.error("Critical email sent!")
 ```
 

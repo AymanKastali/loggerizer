@@ -1,0 +1,7 @@
+services:
+  loggerizer:
+    build:
+      context: ..
+      dockerfile: loggerizer/Dockerfile
+    volumes:
+      - ..:/app:cached

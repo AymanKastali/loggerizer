@@ -1,7 +1,7 @@
 from logging import Handler
 from logging.handlers import SMTPHandler
 
-from config import SMTPConfig
+from loggerizer.config import SMTPConfig
 
 
 def smtp_handler(config: SMTPConfig) -> Handler:

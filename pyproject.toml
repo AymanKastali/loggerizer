@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loggerizer"
+version = "0.1.2"
+description = "A flexible logging framework with JSON, file, and SMTP logging"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Ayman Kastali", email = "aymankastali.backend@gmail.com" }
+]
+license = "MIT"
+dependencies = [
+    "twine>=6.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/AymanKastali/loggerizer"
+Repository = "https://github.com/AymanKastali/loggerizer"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["loggerizer*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pylint",
+    "ruff",
+]
