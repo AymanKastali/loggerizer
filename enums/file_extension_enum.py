@@ -9,5 +9,4 @@ class FileExtensionEnum(StrEnum):
 
     @classmethod
     def values(cls) -> list[str]:
-        """Return all allowed file extensions."""
-        return [ext.value for ext in cls]
+        return [member.value for member in cls]
