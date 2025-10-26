@@ -19,10 +19,9 @@ class BaseFormatter(Formatter):
         LogField.MESSAGE,
     ]
 
-    def __init__(self, *args, extra_fields: Iterable[LogField] | None = None, **kwargs) -> None:
-        """
-        :param extra_fields: Optional iterable of LogField to include beyond defaults
-        """
+    def __init__(
+        self, *args, extra_fields: Iterable[LogField] | None = None, **kwargs
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.fields: list[LogField] = self.DEFAULT_FIELDS.copy()
         if extra_fields:
@@ -30,27 +29,27 @@ class BaseFormatter(Formatter):
                 if field not in self.fields:
                     self.fields.append(field)
 
-    def record_to_dict(self, record: LogRecord) -> dict[str, Any]:
-        """Convert LogRecord to a dictionary of selected fields."""
-
-        def format_exception(exc_info: Any) -> dict[str, Any]:
-            if not exc_info:
-                return {}
-
-            match exc_info:
-                case exc_type, exc_value, exc_tb:
-                    frames = traceback.extract_tb(exc_tb) if exc_tb else []
-                    return {
-                        "type": exc_type.__name__ if exc_type else None,
-                        "message": str(exc_value) if exc_value else None,
-                        "traceback": [
-                            f"{frame.filename}:{frame.lineno} in {frame.name}" for frame in frames
-                        ],
-                    }
+    def _format_exception(self, exc_info: Any) -> dict[str, object]:
+        if not exc_info:
             return {}
 
-        # Full record dict
-        full_record = {
+        match exc_info:
+            case exc_type, exc_value, exc_tb:
+                frames = traceback.extract_tb(exc_tb) if exc_tb else []
+                return {
+                    "type": exc_type.__name__ if exc_type else None,
+                    "message": str(exc_value) if exc_value else None,
+                    "traceback": [
+                        f"{frame.filename}:{frame.lineno} in {frame.name}"
+                        for frame in frames
+                    ],
+                }
+        return {}
+
+    def _build_standard_record(
+        self, record: LogRecord
+    ) -> dict[str, object | None]:
+        return {
             LogField.ASC_TIME.value: self.formatTime(record, self.datefmt),
             LogField.CREATED.value: record.created,
             LogField.LEVEL_NAME.value: record.levelname,
@@ -71,13 +70,42 @@ class BaseFormatter(Formatter):
             LogField.THREAD_NAME.value: record.threadName,
             LogField.TASK_NAME.value: getattr(record, "taskName", None),
             LogField.EXCEPTION.value: (
-                format_exception(record.exc_info) if record.exc_info else None
+                self._format_exception(record.exc_info)
+                if record.exc_info
+                else None
             ),
         }
 
-        # Return only selected fields
+    def _build_extra(self, record: LogRecord) -> dict[str, object]:
+        reserved_keys = set(LogField.values()) | {
+            "msg",
+            "args",
+            "exc_info",
+            "exc_text",
+        }
+
+        return {
+            k: v for k, v in record.__dict__.items() if k not in reserved_keys
+        }
+
+    def _return_log_response(
+        self, full_record, user_extra
+    ) -> dict[str, object | dict[str, object]]:
         return {
             k: full_record[k]
             for k in (f.value for f in self.fields)
             if full_record.get(k) is not None
-        }
+        } | ({"extra": user_extra} if user_extra else {})
+
+    def record_to_dict(
+        self, record: LogRecord
+    ) -> dict[str, object | dict[str, object]]:
+        """Convert LogRecord to a dictionary of selected fields."""
+
+        full_record = self._build_standard_record(record)
+        extra = self._build_extra(record)
+
+        if extra:
+            full_record["extra"] = extra
+
+        return self._return_log_response(full_record, extra)
