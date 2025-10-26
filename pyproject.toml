@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "loggerizer"
-version = "0.1.2"
+version = "0.1.5"
 description = "A flexible logging framework with JSON, file, and SMTP logging"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,7 +26,7 @@ include = ["loggerizer*"]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0",
+    "pytest==8.0",
     "pylint",
     "ruff",
 ]
