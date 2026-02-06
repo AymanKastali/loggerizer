@@ -6,15 +6,11 @@ services:
     container_name: loggerizer-dev
     volumes:
       - ..:/workspaces/loggerizer:cached
-    working_dir: /workspaces/loggerizer
     environment:
-      - PYTHONDONTWRITEBYTECODE=1
-      - PYTHONUNBUFFERED=1
       - SMTP_HOST=mailhog
       - SMTP_PORT=1025
     depends_on:
       - mailhog
-    command: sleep infinity
     tty: true
     stdin_open: true
     networks:

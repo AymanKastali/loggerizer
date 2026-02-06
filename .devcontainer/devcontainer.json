@@ -3,9 +3,7 @@
   "dockerComposeFile": ["docker-compose.dev.yml"],
   "service": "app",
   "workspaceFolder": "/workspaces/loggerizer",
-  "remoteUser": "root",
   "postCreateCommand": "uv sync --extra dev",
-  "postStartCommand": "uv sync --extra dev",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -23,9 +21,10 @@
       "settings": {
         "python.defaultInterpreterPath": "/workspaces/loggerizer/.venv/bin/python",
         "python.analysis.typeCheckingMode": "basic",
-        "python.analysis.extraPaths": ["/workspaces/loggerizer/.venv/lib/python3.11/site-packages"],
+        "python.analysis.extraPaths": [
+          "/workspaces/loggerizer/.venv/lib/python3.11/site-packages"
+        ],
         "editor.formatOnSave": true,
-        "terminal.integrated.cwd": "/workspaces/loggerizer",
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff",
           "editor.codeActionsOnSave": {
