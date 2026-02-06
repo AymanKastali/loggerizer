@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.dev
+    container_name: loggerizer-dev
+    volumes:
+      - ..:/workspaces/loggerizer:cached
+    environment:
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+    depends_on:
+      - mailhog
+    tty: true
+    stdin_open: true
+    networks:
+      - loggerizer-network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: loggerizer-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - loggerizer-network
+
+networks:
+  loggerizer-network:
+    driver: bridge

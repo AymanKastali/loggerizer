@@ -1,0 +1,42 @@
+# Production Dockerfile for loggerizer
+FROM python:3.11-slim AS base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Build stage
+FROM base AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN pip install setuptools==80.9.0 wheel==0.45.1
+
+# Copy only files needed for building
+COPY pyproject.toml README.md MANIFEST.in ./
+COPY loggerizer/ ./loggerizer/
+
+# Build the wheel
+RUN python -m pip wheel --no-deps --wheel-dir /build/wheels .
+
+# Production stage
+FROM base AS production
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN groupadd --gid 1000 appgroup \
+    && useradd --uid 1000 --gid appgroup --shell /bin/bash --create-home appuser
+
+# Copy and install the wheel
+COPY --from=builder /build/wheels/*.whl /tmp/
+RUN pip install /tmp/*.whl && rm /tmp/*.whl
+
+# Switch to non-root user
+USER appuser
+
+# Default command (can be overridden)
+CMD ["python", "-c", "import loggerizer; print('loggerizer ready')"]

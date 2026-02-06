@@ -1,30 +1,21 @@
-from loggerizer.enums import (
-    FileExtensionEnum,
-    FileModeEnum,
-    LogLevelEnum,
-    TimeRotationIntervalEnum,
-)
+from loggerizer import FileExtension, FileMode, LogLevel, RotateWhen
 
 
-def test_file_extension_enum():
-    values = FileExtensionEnum.values()
-    assert ".log" in values
-    assert ".csv" in values
+def test_file_extension():
+    assert FileExtension.LOG == ".log"
+    assert FileExtension.CSV == ".csv"
 
 
-def test_file_mode_enum():
-    values = FileModeEnum.values()
-    assert "a" in values
-    assert "w" in values
+def test_file_mode():
+    assert FileMode.APPEND == "a"
+    assert FileMode.WRITE == "w"
 
 
-def test_log_level_enum():
-    values = LogLevelEnum.values()
-    assert LogLevelEnum.DEBUG.value in values
-    assert LogLevelEnum.CRITICAL.value in values
+def test_log_level():
+    assert LogLevel.DEBUG == 10
+    assert LogLevel.CRITICAL == 50
 
 
-def test_time_rotation_interval_enum():
-    values = TimeRotationIntervalEnum.values()
-    assert "midnight" in values
-    assert "H" in values
+def test_rotate_when():
+    assert RotateWhen.MIDNIGHT == "midnight"
+    assert RotateWhen.HOURS == "H"

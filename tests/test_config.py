@@ -1,4 +1,4 @@
-from loggerizer.config import SMTPConfig
+from loggerizer import SMTPConfig
 
 
 def test_smtp_config_defaults():

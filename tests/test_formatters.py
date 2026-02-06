@@ -1,15 +1,20 @@
 import json
 from logging import LogRecord
 
-from loggerizer.enums import LogField, LogLevelEnum
-from loggerizer.formatters import BaseFormatter, DefaultFormatter, JsonFormatter
+from loggerizer import (
+    BaseFormatter,
+    DefaultFormatter,
+    JsonFormatter,
+    LogField,
+    LogLevel,
+)
 
 
 def create_sample_record() -> LogRecord:
     """Helper to create a sample LogRecord for testing."""
     return LogRecord(
         name="test",
-        level=LogLevelEnum.DEBUG.value,  # Use enum
+        level=LogLevel.DEBUG,
         pathname="",
         lineno=1,
         msg="msg",
@@ -18,13 +23,13 @@ def create_sample_record() -> LogRecord:
     )
 
 
-def test_base_formatter_record_to_dict():
+def test_base_formatter_to_dict():
     record = create_sample_record()
     fmt = BaseFormatter()
-    d = fmt.record_to_dict(record)
+    d = fmt.to_dict(record)
 
-    assert d[LogField.LEVEL_NAME.value] == LogLevelEnum.DEBUG.name
-    assert d[LogField.MESSAGE.value] == "msg"
+    assert d[LogField.LEVEL_NAME] == "DEBUG"
+    assert d[LogField.MESSAGE] == "msg"
 
 
 def test_default_formatter_flat():
@@ -32,7 +37,6 @@ def test_default_formatter_flat():
     fmt = DefaultFormatter(flat=True)
     output = fmt.format(record)
 
-    # Flat output should contain pipe separators
     assert "|" in output
 
 
@@ -41,9 +45,8 @@ def test_default_formatter_named():
     fmt = DefaultFormatter(flat=False)
     output = fmt.format(record)
 
-    # Named output should include field names
-    assert f"{LogField.LEVEL_NAME.value}={LogLevelEnum.DEBUG.name}" in output
-    assert f"{LogField.MESSAGE.value}=msg" in output
+    assert "levelname=DEBUG" in output
+    assert "message=msg" in output
 
 
 def test_json_formatter_output():
@@ -52,5 +55,5 @@ def test_json_formatter_output():
     output = fmt.format(record)
     data = json.loads(output)
 
-    assert data[LogField.LEVEL_NAME.value] == LogLevelEnum.DEBUG.name
-    assert data[LogField.MESSAGE.value] == "msg"
+    assert data[LogField.LEVEL_NAME] == "DEBUG"
+    assert data[LogField.MESSAGE] == "msg"

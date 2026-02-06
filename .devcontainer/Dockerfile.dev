@@ -1,0 +1,18 @@
+# Development Dockerfile for loggerizer
+FROM python:3.11-slim
+
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV UV_LINK_MODE=copy
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
+
+# Install minimal system tools (git installed via devcontainer feature)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    bash-completion \
+    make \
+    && rm -rf /var/lib/apt/lists/*
