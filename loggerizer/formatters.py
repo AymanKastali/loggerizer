@@ -43,8 +43,7 @@ class BaseFormatter(Formatter):
             "type": exc_type.__name__,
             "message": str(exc_value) if exc_value else None,
             "traceback": [
-                f"{frame.filename}:{frame.lineno} in {frame.name}"
-                for frame in frames
+                f"{frame.filename}:{frame.lineno} in {frame.name}" for frame in frames
             ],
         }
 

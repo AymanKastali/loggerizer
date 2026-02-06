@@ -43,6 +43,7 @@ dev = [
     "pylint==4.0.4",
     "ruff==0.15.0",
     "twine==6.2.0",
+    "pre-commit==4.0.1",
 ]
 
 [tool.pyright]

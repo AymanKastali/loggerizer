@@ -3,7 +3,7 @@
   "dockerComposeFile": ["docker-compose.dev.yml"],
   "service": "app",
   "workspaceFolder": "/workspaces/loggerizer",
-  "postCreateCommand": "uv sync --extra dev",
+  "postCreateCommand": "uv sync --extra dev && uv run pre-commit install && uv run pre-commit run --all-files",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},

@@ -1,7 +1,13 @@
 import json
 from logging import LogRecord
 
-from loggerizer import BaseFormatter, DefaultFormatter, JsonFormatter, LogField, LogLevel
+from loggerizer import (
+    BaseFormatter,
+    DefaultFormatter,
+    JsonFormatter,
+    LogField,
+    LogLevel,
+)
 
 
 def create_sample_record() -> LogRecord:
