@@ -39,4 +39,4 @@ RUN pip install /tmp/*.whl && rm /tmp/*.whl
 USER appuser
 
 # Default command (can be overridden)
-CMD ["python", "-c", "import loggerizer; print(f'loggerizer ready')"]
+CMD ["python", "-c", "import loggerizer; print('loggerizer ready')"]

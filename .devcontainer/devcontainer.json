@@ -1,18 +1,14 @@
 {
-  "name": "Loggerizer Dev Container",
-  "build": {
-    "dockerfile": "Dockerfile.dev",
-    "context": ".."
-  },
+  "name": "Loggerizer Dev",
+  "dockerComposeFile": ["docker-compose.dev.yml"],
+  "service": "app",
   "workspaceFolder": "/workspaces/loggerizer",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/loggerizer,type=bind,consistency=cached",
   "remoteUser": "root",
-  "postCreateCommand": "uv sync --dev",
-  "postStartCommand": "uv sync --dev",
+  "postCreateCommand": "uv sync --extra dev",
+  "postStartCommand": "uv sync --extra dev",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/sshd:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
@@ -27,6 +23,7 @@
       "settings": {
         "python.defaultInterpreterPath": "/workspaces/loggerizer/.venv/bin/python",
         "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.extraPaths": ["/workspaces/loggerizer/.venv/lib/python3.11/site-packages"],
         "editor.formatOnSave": true,
         "terminal.integrated.cwd": "/workspaces/loggerizer",
         "[python]": {

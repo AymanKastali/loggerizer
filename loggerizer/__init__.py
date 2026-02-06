@@ -1,37 +1,51 @@
-from . import config, enums, filters, formatters, handlers, loggers
+"""
+Loggerizer - A simple, powerful wrapper for Python's logging module.
 
-# Re-export commonly used classes for convenience
-from .config import SMTPConfig
-from .enums import (
-    FileExtensionEnum,
-    FileModeEnum,
-    LogField,
-    LogLevelEnum,
-    TimeRotationIntervalEnum,
-)
-from .filters import InfoFilter
-from .formatters import BaseFormatter, DefaultFormatter, JsonFormatter
-from .loggers import LoggerBuilder, LoggerFactory
+Quick Start:
+    from loggerizer import LoggerFactory
+
+    logger = LoggerFactory.console()
+    logger.info("Hello, World!")
+
+Custom Logger:
+    from loggerizer import LoggerBuilder, handlers, LogLevel
+
+    logger = (
+        LoggerBuilder()
+        .name("my_app")
+        .level(LogLevel.DEBUG)
+        .handler(handlers.file("app.log"))
+        .build()
+    )
+"""
+
+from loggerizer import handlers
+from loggerizer.builder import LoggerBuilder
+from loggerizer.config import SMTPConfig
+from loggerizer.enums import FileExtension, FileMode, LogField, LogLevel, RotateWhen
+from loggerizer.factory import LoggerFactory
+from loggerizer.filters import InfoFilter, LevelFilter
+from loggerizer.formatters import BaseFormatter, DefaultFormatter, JsonFormatter
 
 __all__ = [
-    # Submodules
-    "config",
-    "enums",
-    "filters",
-    "formatters",
+    # Core
+    "LoggerFactory",
+    "LoggerBuilder",
+    # Handlers module
     "handlers",
-    "loggers",
-    # Direct exports
-    "SMTPConfig",
-    "FileExtensionEnum",
-    "FileModeEnum",
-    "LogField",
-    "LogLevelEnum",
-    "TimeRotationIntervalEnum",
-    "InfoFilter",
+    # Formatters
     "BaseFormatter",
     "DefaultFormatter",
     "JsonFormatter",
-    "LoggerBuilder",
-    "LoggerFactory",
+    # Filters
+    "LevelFilter",
+    "InfoFilter",
+    # Config
+    "SMTPConfig",
+    # Enums
+    "LogLevel",
+    "LogField",
+    "FileExtension",
+    "FileMode",
+    "RotateWhen",
 ]

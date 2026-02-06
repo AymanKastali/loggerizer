@@ -7,7 +7,7 @@ name = "loggerizer"
 version = "0.1.9"
 description = "A flexible logging framework with JSON, file, and SMTP logging"
 readme = "README.md"
-requires-python = "~=3.11.0"
+requires-python = "~=3.11"
 authors = [
     { name = "Ayman Kastali", email = "aymankastali.backend@gmail.com" }
 ]
@@ -29,3 +29,14 @@ dev = [
     "ruff==0.15.0",
     "twine==6.2.0",
 ]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+extraPaths = [".venv/lib/python3.11/site-packages"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

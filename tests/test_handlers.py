@@ -1,59 +1,46 @@
 import io
 from logging import NullHandler, StreamHandler
-from logging.handlers import (
-    RotatingFileHandler,
-    SMTPHandler,
-    TimedRotatingFileHandler,
-)
+from logging.handlers import RotatingFileHandler, SMTPHandler, TimedRotatingFileHandler
 
 import pytest
 
-from loggerizer.config import SMTPConfig
-from loggerizer.enums import FileExtensionEnum, FileModeEnum
-from loggerizer.handlers import (
-    file_handler,
-    null_handler,
-    rotating_file_handler,
-    smtp_handler,
-    stream_handler,
-    timed_rotating_file_handler,
-)
+from loggerizer import FileExtension, FileMode, SMTPConfig, handlers
 
 
 def test_file_handler_valid(tmp_path):
-    file = tmp_path / f"test{FileExtensionEnum.LOG.value}"
-    handler = file_handler(str(file), mode=FileModeEnum.APPEND)
+    filepath = tmp_path / f"test{FileExtension.LOG}"
+    handler = handlers.file(str(filepath), mode=FileMode.APPEND)
     assert hasattr(handler, "emit")
-    assert handler.mode == FileModeEnum.APPEND.value  # type: ignore
+    assert handler.mode == FileMode.APPEND
 
 
 def test_file_handler_invalid_extension(tmp_path):
-    file = tmp_path / "test.invalid"
+    filepath = tmp_path / "test.invalid"
     with pytest.raises(ValueError) as exc_info:
-        file_handler(str(file))
-    assert "Invalid file extension" in str(exc_info.value)
+        handlers.file(str(filepath))
+    assert "Invalid extension" in str(exc_info.value)
 
 
 def test_null_handler():
-    handler = null_handler()
+    handler = handlers.null()
     assert isinstance(handler, NullHandler)
 
 
 def test_stream_handler():
-    stream = io.StringIO()
-    handler = stream_handler(stream)
+    output = io.StringIO()
+    handler = handlers.stream(output)
     assert isinstance(handler, StreamHandler)
 
 
-def test_rotating_file_handler(tmp_path):
-    file = tmp_path / f"rot{FileExtensionEnum.LOG.value}"
-    handler = rotating_file_handler(str(file))
+def test_rotating_handler(tmp_path):
+    filepath = tmp_path / f"rot{FileExtension.LOG}"
+    handler = handlers.rotating(str(filepath))
     assert isinstance(handler, RotatingFileHandler)
 
 
-def test_timed_rotating_file_handler(tmp_path):
-    file = tmp_path / f"timed{FileExtensionEnum.LOG.value}"
-    handler = timed_rotating_file_handler(str(file))
+def test_timed_rotating_handler(tmp_path):
+    filepath = tmp_path / f"timed{FileExtension.LOG}"
+    handler = handlers.timed_rotating(str(filepath))
     assert isinstance(handler, TimedRotatingFileHandler)
 
 
@@ -64,7 +51,7 @@ def test_smtp_handler():
         to_address=["to@example.com"],
         subject="Test",
     )
-    handler = smtp_handler(conf)
+    handler = handlers.smtp(conf)
     assert isinstance(handler, SMTPHandler)
     assert handler.fromaddr == conf.from_address
     assert handler.toaddrs == conf.to_address
