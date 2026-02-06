@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "loggerizer"
-version = "0.1.9"
+version = "1.0.0"
 description = "A flexible logging framework with JSON, file, and SMTP logging"
 readme = "README.md"
 requires-python = "~=3.11"
@@ -13,14 +13,30 @@ authors = [
 ]
 license = "MIT"
 dependencies = []
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Logging",
+    "Typing :: Typed",
+]
+keywords = ["logging", "logger", "json", "structured-logging"]
 
 [project.urls]
 Homepage = "https://github.com/AymanKastali/loggerizer"
 Repository = "https://github.com/AymanKastali/loggerizer"
+Documentation = "https://github.com/AymanKastali/loggerizer#readme"
+Issues = "https://github.com/AymanKastali/loggerizer/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["loggerizer*"]
+
+[tool.setuptools.package-data]
+loggerizer = ["py.typed"]
 
 [project.optional-dependencies]
 dev = [
@@ -40,3 +56,11 @@ extraPaths = [".venv/lib/python3.11/site-packages"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]

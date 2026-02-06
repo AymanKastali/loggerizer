@@ -1,130 +1,195 @@
-# Loggerizer Logger Examples
+# Loggerizer
 
-This document demonstrates how to use individual loggers from **Loggerizer** separately without wrapping them in a main function.
+A simple, powerful wrapper for Python's built-in logging module.
 
----
+[![PyPI version](https://badge.fury.io/py/loggerizer.svg)](https://badge.fury.io/py/loggerizer)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Console Logger
+## Installation
 
-```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
-
-console_logger = LoggerFactory.console_logger(name="console_main", flat=True)
-console.info("Console logger ready!")
+```bash
+pip install loggerizer
 ```
 
-## Console JSON Logger
+## Quick Start
 
 ```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
+from loggerizer import LoggerFactory
 
-console_json_logger = LoggerFactory.json_console_logger(
-    name="console_json_main",
-    extra_fields=[LogField.MODULE, LogField.THREAD_NAME, LogField.PROCESS],
+logger = LoggerFactory.console()
+logger.info("Hello, World!")
+```
+
+## Logger Types
+
+### Console Logger
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.console()
+logger.info("Human-readable console output")
+```
+
+### Console JSON Logger
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.console_json()
+logger.info("Structured JSON output")
+```
+
+### File Logger
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.file("app.log")
+logger.info("Logging to file")
+```
+
+### JSON File Logger
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.file_json("app.json")
+logger.info("JSON logging to file")
+```
+
+### Rotating Logger (by size)
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.rotating(
+    "app.log",
+    max_bytes=10_000_000,  # 10MB
+    backup_count=5
 )
-console_json.info("Console JSON logger ready!")
+logger.info("Size-based rotation")
 ```
 
-## File Logger
+### Timed Rotating Logger
 
 ```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
+from loggerizer import LoggerFactory, RotateWhen
 
-file_log = LoggerFactory.file_logger(
-    name="file_main",
-    filename="app",
-    extra_fields=[LogField.MODULE, LogField.LINE_NO, LogField.FUNC_NAME],
-    flat=True,
+logger = LoggerFactory.timed_rotating(
+    "app.log",
+    when=RotateWhen.MIDNIGHT,
+    backup_count=7
 )
-file_log.warning("File logger writing to app.log")
+logger.info("Time-based rotation")
 ```
 
-## JSON File Logger
+### Email Logger
 
 ```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
+from loggerizer import LoggerFactory, SMTPConfig
 
-json_log = LoggerFactory.json_file_logger(
-    name="json_file_main",
-    filename="events",
-    extra_fields=[LogField.MODULE, LogField.THREAD_NAME, LogField.PROCESS],
-)
-json_log.debug("JSON log entry")
-```
-
-## Timed Rotating Logger
-
-```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
-
-timed = LoggerFactory.timed_rotating_logger(
-    name="timed_logger",
-    filename="timed_logs",
-    extra_fields=[LogField.MODULE, LogField.PROCESS_NAME],
-)
-timed.info("Timed rotating log active")
-```
-
-## Size Rotating Logger
-
-```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
-
-rotating = LoggerFactory.size_rotating_logger(
-    name="rotating_logger",
-    filename="rotating_logs",
-    extra_fields=[LogField.MODULE, LogField.LINE_NO],
-)
-rotating.info("Size rotating log active")
-```
-
-## Null Logger
-
-```python
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
-
-null_log = LoggerFactory.null_logger(name="null_main")
-null_log.info("This message is discarded")
-```
-
-## SMTP Logger
-
-```python
-from loggerizer.config.smtp_config import SMTPConfig
-from loggerizer.loggers import LoggerFactory
-from loggerizer.enums import LogField
-
-smtp_conf = SMTPConfig(
-    host=("localhost", 1025),
-    from_address="test@example.com",
+config = SMTPConfig(
+    host=("smtp.example.com", 587),
+    from_address="alerts@example.com",
     to_address=["admin@example.com"],
-    subject="Critical Alert",
+    subject="[ALERT] Application Error",
 )
 
-smtp_log = LoggerFactory.email_logger(
-    name="smtp_main",
-    smtp_config=smtp_conf,
-    extra_fields=[LogField.MODULE, LogField.LINE_NO, LogField.FUNC_NAME],
-)
-smtp_log.error("Critical email sent!")
+logger = LoggerFactory.email(config)
+logger.error("Critical error occurred!")
 ```
 
----
+### Null Logger
 
-### Logger Features
+```python
+from loggerizer import LoggerFactory
 
-* **Console Logger**: Outputs logs to the console.
-* **JSON Console Logger**: Outputs logs in JSON format.
-* **File Logger**: Writes logs to a standard log file.
-* **JSON File Logger**: Writes logs in JSON format.
-* **Timed Rotating Logger**: Rotates logs based on time intervals.
-* **Size Rotating Logger**: Rotates logs based on file size.
-* **Null Logger**: Discards log messages.
-* **SMTP Logger**: Sends error messages via email.
+logger = LoggerFactory.null()
+logger.info("This message is discarded")
+```
+
+## Custom Logger (Builder Pattern)
+
+```python
+from loggerizer import LoggerBuilder, handlers, LogLevel, LogField, DefaultFormatter
+
+logger = (
+    LoggerBuilder()
+    .name("my_app")
+    .level(LogLevel.DEBUG)
+    .formatter(DefaultFormatter(
+        fields=[LogField.ASC_TIME, LogField.LEVEL_NAME, LogField.MESSAGE, LogField.MODULE],
+        flat=True
+    ))
+    .handler(handlers.stream())
+    .handler(handlers.file("app.log"))
+    .build()
+)
+
+logger.debug("Debug message")
+logger.info("Info message")
+logger.error("Error message")
+```
+
+## Adding Extra Data
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.console_json()
+logger.info("User action", extra={"user_id": 123, "action": "login", "ip": "192.168.1.1"})
+```
+
+## Custom Fields
+
+```python
+from loggerizer import LoggerFactory, LogField
+
+logger = LoggerFactory.console(
+    fields=[
+        LogField.ASC_TIME,
+        LogField.LEVEL_NAME,
+        LogField.MESSAGE,
+        LogField.MODULE,
+        LogField.FUNC_NAME,
+        LogField.LINE_NO,
+    ]
+)
+logger.info("With extra context")
+```
+
+## Available Log Fields
+
+| Field | Description |
+|-------|-------------|
+| `ASC_TIME` | Human-readable timestamp |
+| `LEVEL_NAME` | Log level (DEBUG, INFO, etc.) |
+| `MESSAGE` | Log message |
+| `NAME` | Logger name |
+| `MODULE` | Module name |
+| `FUNC_NAME` | Function name |
+| `LINE_NO` | Line number |
+| `FILE_NAME` | File name |
+| `PATH_NAME` | Full file path |
+| `PROCESS` | Process ID |
+| `THREAD` | Thread ID |
+| `EXCEPTION` | Exception info |
+
+## Handlers
+
+```python
+from loggerizer import handlers
+
+handlers.stream()                    # Console output
+handlers.file("app.log")             # File output
+handlers.rotating("app.log")         # Size-based rotation
+handlers.timed_rotating("app.log")   # Time-based rotation
+handlers.smtp(config)                # Email alerts
+handlers.null()                      # Discard logs
+```
+
+## License
+
+MIT
