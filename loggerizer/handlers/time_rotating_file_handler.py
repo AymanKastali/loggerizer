@@ -1,7 +1,8 @@
 from logging import Handler
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 
-from loggerizer.enums import TimeRotationIntervalEnum
+from loggerizer.enums import FileExtensionEnum, TimeRotationIntervalEnum
 
 
 def timed_rotating_file_handler(
@@ -14,6 +15,12 @@ def timed_rotating_file_handler(
     utc: bool = False,
     errors: str | None = None,
 ) -> Handler:
+    path = Path(filename)
+    if path.suffix not in FileExtensionEnum.values():
+        raise ValueError(
+            f"Invalid file extension '{path.suffix}'. Allowed: {', '.join(FileExtensionEnum.values())}"
+        )
+
     return TimedRotatingFileHandler(
         filename=filename,
         when=when.value,

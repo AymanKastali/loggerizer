@@ -1,5 +1,8 @@
 from logging import Handler
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
+
+from loggerizer.enums import FileExtensionEnum
 
 
 def rotating_file_handler(
@@ -8,6 +11,12 @@ def rotating_file_handler(
     backup_count: int = 5,
     encoding: str | None = "utf-8",
 ) -> Handler:
+    path = Path(filename)
+    if path.suffix not in FileExtensionEnum.values():
+        raise ValueError(
+            f"Invalid file extension '{path.suffix}'. Allowed: {', '.join(FileExtensionEnum.values())}"
+        )
+
     return RotatingFileHandler(
         filename=filename, maxBytes=max_bytes, backupCount=backup_count, encoding=encoding
     )

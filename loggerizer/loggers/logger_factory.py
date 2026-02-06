@@ -36,7 +36,6 @@ class LoggerFactory:
         delay: bool = False,
         errors: str | None = None,
         extra_fields: list[LogField] | None = None,
-        flat: bool = False,  # added flat parameter for default formatter
     ) -> Logger:
         return (
             LoggerBuilder()
@@ -104,7 +103,6 @@ class LoggerFactory:
         name: str = "console_json_logger",
         stream: TextIO | None = None,
         extra_fields: list[LogField] | None = None,
-        flat: bool = False,  # flat is ignored for JSON, kept for API consistency
     ) -> Logger:
         return (
             LoggerBuilder()

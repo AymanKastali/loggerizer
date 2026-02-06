@@ -1,6 +1,26 @@
+# Python bytecode
 **/__pycache__/
 **/*.pyc
+**/*.pyo
+
+# Virtual environments
 .venv/
+venv/
 env/
+
+# Git
 .git/
-.gitignore
+
+# IDE
+.idea/
+.vscode/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

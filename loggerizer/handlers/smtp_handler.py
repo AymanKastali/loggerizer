@@ -12,4 +12,5 @@ def smtp_handler(config: SMTPConfig) -> Handler:
         subject=config.subject,
         credentials=config.credentials,
         secure=config.secure,
+        timeout=config.timeout,
     )
