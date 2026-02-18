@@ -32,6 +32,55 @@ logger = LoggerFactory.console()
 logger.info("Human-readable console output")
 ```
 
+### Colored Console Logger
+
+```python
+from loggerizer import LoggerFactory
+
+logger = LoggerFactory.console(colorize=True)
+logger.debug("Dim metadata, bold cyan level")
+logger.info("Bold green level name")
+logger.warning("Bold yellow level name")
+logger.error("Red level + red message")
+logger.critical("Bright red level + red message")
+```
+
+Color scheme:
+- **Level name**: bold + level color, padded to fixed width
+- **Message**: default terminal color (colored red for ERROR/CRITICAL)
+- **Exceptions**: colored tracebacks for ERROR/CRITICAL
+- **Metadata** (timestamp, logger name, etc.): dim gray
+- **Separator**: dim `│`
+
+Colors are automatically disabled when output is piped or redirected. Works on Linux, macOS, and Windows.
+
+### Colored Console Logger (Builder)
+
+```python
+from loggerizer import LoggerBuilder, handlers, LogLevel
+from loggerizer.formatters import ColorFormatter
+
+logger = (
+    LoggerBuilder()
+    .name("my_app")
+    .level(LogLevel.DEBUG)
+    .formatter(ColorFormatter(flat=True))
+    .handler(handlers.stream())
+    .build()
+)
+```
+
+### Custom Color Mapping
+
+```python
+from loggerizer.formatters import ColorFormatter
+
+formatter = ColorFormatter(
+    flat=True,
+    colors={"DEBUG": "\033[35m"},  # magenta for DEBUG
+)
+```
+
 ### Console JSON Logger
 
 ```python
@@ -176,6 +225,14 @@ logger.info("With extra context")
 | `PROCESS` | Process ID |
 | `THREAD` | Thread ID |
 | `EXCEPTION` | Exception info |
+
+## Formatters
+
+| Formatter | Description |
+|-----------|-------------|
+| `DefaultFormatter` | Human-readable pipe-separated output |
+| `ColorFormatter` | ANSI-colored console output with per-segment styling |
+| `JsonFormatter` | Structured JSON output |
 
 ## Handlers
 

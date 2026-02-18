@@ -7,7 +7,7 @@ from loggerizer import handlers
 from loggerizer.builder import LoggerBuilder
 from loggerizer.config import SMTPConfig
 from loggerizer.enums import FileMode, LogField, LogLevel, RotateWhen
-from loggerizer.formatters import DefaultFormatter, JsonFormatter
+from loggerizer.formatters import ColorFormatter, DefaultFormatter, JsonFormatter
 
 
 class LoggerFactory:
@@ -33,11 +33,17 @@ class LoggerFactory:
         fields: list[LogField] | None = None,
         flat: bool = False,
         stream: TextIO | None = None,
+        colorize: bool = False,
     ) -> Logger:
         """Create a console logger with human-readable output."""
+        formatter: DefaultFormatter
+        if colorize:
+            formatter = ColorFormatter(fields=fields, flat=flat, stream=stream)
+        else:
+            formatter = DefaultFormatter(fields=fields, flat=flat)
         return (
             cls._builder(name, level)
-            .formatter(DefaultFormatter(fields=fields, flat=flat))
+            .formatter(formatter)
             .handler(handlers.stream(stream))
             .build()
         )

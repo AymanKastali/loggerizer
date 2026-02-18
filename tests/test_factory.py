@@ -5,6 +5,7 @@ from logging.handlers import SMTPHandler
 import pytest
 
 from loggerizer import LoggerFactory, SMTPConfig
+from loggerizer.formatters import ColorFormatter
 
 
 def test_null_logger():
@@ -17,6 +18,13 @@ def test_console_logger():
     logger = LoggerFactory.console()
     assert isinstance(logger, Logger)
     assert any(isinstance(h, StreamHandler) for h in logger.handlers)
+
+
+def test_console_logger_colorize():
+    logger = LoggerFactory.console(name="console_color", colorize=True)
+    assert isinstance(logger, Logger)
+    handler = logger.handlers[0]
+    assert isinstance(handler.formatter, ColorFormatter)
 
 
 def test_file_logger(tmp_path):

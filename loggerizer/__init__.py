@@ -25,7 +25,12 @@ from loggerizer.config import SMTPConfig
 from loggerizer.enums import FileExtension, FileMode, LogField, LogLevel, RotateWhen
 from loggerizer.factory import LoggerFactory
 from loggerizer.filters import InfoFilter, LevelFilter
-from loggerizer.formatters import BaseFormatter, DefaultFormatter, JsonFormatter
+from loggerizer.formatters import (
+    BaseFormatter,
+    ColorFormatter,
+    DefaultFormatter,
+    JsonFormatter,
+)
 
 __all__ = [
     # Core
@@ -35,6 +40,7 @@ __all__ = [
     "handlers",
     # Formatters
     "BaseFormatter",
+    "ColorFormatter",
     "DefaultFormatter",
     "JsonFormatter",
     # Filters
