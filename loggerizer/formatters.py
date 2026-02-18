@@ -32,7 +32,7 @@ def _enable_windows_ansi() -> None:
         # STD_OUTPUT_HANDLE = -11, STD_ERROR_HANDLE = -12
         for handle_id in (-11, -12):
             handle = kernel32.GetStdHandle(handle_id)
-            mode = ctypes.c_ulong()
+            mode = ctypes.c_ulong(0)
             kernel32.GetConsoleMode(handle, ctypes.byref(mode))
             # ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
